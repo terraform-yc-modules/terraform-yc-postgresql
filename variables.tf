@@ -202,20 +202,22 @@ variable "databases" {
     List of PostgreSQL databases.
 
     Required values:
-      - name        - (Required) The name of the database.
-      - owner       - (Required) Name of the user assigned as the owner of the database. Forbidden to change in an existing database.
-      - extension   - (Optional) Set of database extensions. 
-      - lc_collate  - (Optional) POSIX locale for string sorting order. Forbidden to change in an existing database.
-      - lc_type     - (Optional) POSIX locale for character classification. Forbidden to change in an existing database.
-      - template_db - (Optional) Name of the template database.
+      - name                - (Required) The name of the database.
+      - owner               - (Required) Name of the user assigned as the owner of the database. Forbidden to change in an existing database.
+      - extension           - (Optional) Set of database extensions. 
+      - lc_collate          - (Optional) POSIX locale for string sorting order. Forbidden to change in an existing database.
+      - lc_type             - (Optional) POSIX locale for character classification. Forbidden to change in an existing database.
+      - template_db         - (Optional) Name of the template database.
+      - deletion_protection - (Optional) A deletion protection.
   EOF
   type = list(object({
-    name        = string
-    owner       = string
-    lc_collate  = optional(string, null)
-    lc_type     = optional(string, null)
-    template_db = optional(string, null)
-    extensions  = optional(list(string), [])
+    name                = string
+    owner               = string
+    lc_collate          = optional(string, null)
+    lc_type             = optional(string, null)
+    template_db         = optional(string, null)
+    deletion_protection = optional(bool, null)
+    extensions          = optional(list(string), [])
   }))
 }
 
