@@ -43,5 +43,3 @@ resource "yandex_mdb_postgresql_user" "user" {
     }
   }
 }
-
-
