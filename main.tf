@@ -95,4 +95,3 @@ resource "yandex_mdb_postgresql_cluster" "this" {
   }
 
 }
-

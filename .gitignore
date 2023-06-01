@@ -33,5 +33,3 @@ terraform.rc
 
 # Zip archive
 *.zip
-
-setvar.cmd
