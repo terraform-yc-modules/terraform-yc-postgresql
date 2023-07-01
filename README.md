@@ -20,7 +20,7 @@ First, you need to create a VPC network with three subnets.
 
 <b>Notes:</b>
 1. The `owners` variable defines a list of databases owners. It does not support the `permissions` list because these users will be linked with `databases` via the `owner` parameter. This means each database must have an owner.
-2. The `users` variable defines a list of separate DB users with the `permissions` list, which points to a list of databases. This means each user will have an access to each database from the `permissions` list.
+2. The `users` variable defines a list of separate DB users with the `permissions` list, which points to a list of databases. This means each user will have access to each database from the `permissions` list.
 3. The `settings_options` parameter may be null, in which case the default values will be used.
 
 ### Example
