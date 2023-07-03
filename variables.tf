@@ -102,7 +102,7 @@ variable "restore_parameters" {
     NOTES:
       - backup_id must be specified to create a new PostgreSQL cluster from a backup.
       - time format is 'yyy-mm-ddThh:mi:ss', where T is a delimeter, e.g. "2023-04-05T11:22:33".
-      - time_inclusive indicates recovery to nearest recovery point just berfore (false) or right after (true) the time.
+      - time_inclusive indicates recovery to nearest recovery point just before (false) or right after (true) the time.
   EOF
   type = object({
     backup_id      = string
