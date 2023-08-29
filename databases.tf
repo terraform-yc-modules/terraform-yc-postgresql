@@ -8,6 +8,7 @@ resource "yandex_mdb_postgresql_database" "database" {
   lc_collate          = each.value.lc_collate
   lc_type             = each.value.lc_type
   deletion_protection = each.value.deletion_protection
+  template_db         = each.value.template_db
 
   dynamic "extension" {
     for_each = each.value.extensions
