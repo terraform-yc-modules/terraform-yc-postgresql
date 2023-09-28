@@ -44,7 +44,7 @@ export TF_VAR_network_id=_vpc id here_
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | > 3.3 |
 | <a name="requirement_yandex"></a> [yandex](#requirement\_yandex) | > 0.8 |
 
@@ -89,7 +89,7 @@ No modules.
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment type: PRODUCTION or PRESTABLE | `string` | `"PRODUCTION"` | no |
 | <a name="input_folder_id"></a> [folder\_id](#input\_folder\_id) | Folder id in that contains the PostgreSQL cluster | `string` | `null` | no |
 | <a name="input_host_master_name"></a> [host\_master\_name](#input\_host\_master\_name) | Name of the master host. | `string` | `null` | no |
-| <a name="input_hosts_definition"></a> [hosts\_definition](#input\_hosts\_definition) | A list of PostgreSQL hosts. | <pre>list(object({<br>    name                    = optional(string, null)<br>    zone                    = string<br>    subnet_id               = optional(string, null)<br>    assign_public_ip        = optional(bool, false)<br>    replication_source_name = optional(string, null)<br>    priority                = optional(number, null)<br>  }))</pre> | `[]` | no |
+| <a name="input_hosts_definition"></a> [hosts\_definition](#input\_hosts\_definition) | A list of PostgreSQL hosts. | <pre>list(object({<br>    name                    = optional(string, null)<br>    zone                    = string<br>    subnet_id               = string<br>    assign_public_ip        = optional(bool, false)<br>    replication_source_name = optional(string, null)<br>    priority                = optional(number, null)<br>  }))</pre> | n/a | yes |
 | <a name="input_labels"></a> [labels](#input\_labels) | A set of label pairs to assing to the PostgreSQL cluster. | `map(any)` | `{}` | no |
 | <a name="input_maintenance_window"></a> [maintenance\_window](#input\_maintenance\_window) | (Optional) Maintenance policy of the PostgreSQL cluster.<br>      - type - (Required) Type of maintenance window. Can be either ANYTIME or WEEKLY. A day and hour of window need to be specified with weekly window.<br>      - day  - (Optional) Day of the week (in DDD format). Allowed values: "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"<br>      - hour - (Optional) Hour of the day in UTC (in HH format). Allowed value is between 0 and 23. | <pre>object({<br>    type = string<br>    day  = optional(string, null)<br>    hour = optional(string, null)<br>  })</pre> | <pre>{<br>  "type": "ANYTIME"<br>}</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | PostgreSQL cluster name | `string` | `"pgsql-cluster"` | no |
