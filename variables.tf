@@ -179,12 +179,11 @@ variable "hosts_definition" {
   type = list(object({
     name                    = optional(string, null)
     zone                    = string
-    subnet_id               = optional(string, null)
+    subnet_id               = string
     assign_public_ip        = optional(bool, false)
     replication_source_name = optional(string, null)
     priority                = optional(number, null)
   }))
-  default = []
 }
 
 variable "postgresql_config" {
@@ -219,6 +218,10 @@ variable "databases" {
     deletion_protection = optional(bool, null)
     extensions          = optional(list(string), [])
   }))
+  validation {
+    condition     = !contains([for database in var.databases : database.owner], "admin")
+    error_message = "User name 'admin' is not allowed"
+  }
 }
 
 variable "owners" {
@@ -244,6 +247,10 @@ variable "owners" {
     settings            = optional(map(any), {})
     deletion_protection = optional(bool, null)
   }))
+  validation {
+    condition     = !contains([for user in var.owners : user.name], "admin")
+    error_message = "User name 'admin' is not allowed"
+  }
 }
 
 variable "users" {
