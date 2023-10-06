@@ -62,8 +62,8 @@ variable "pg_version" {
   type        = string
   default     = "15"
   validation {
-    condition     = contains(["11", "11-1c", "12", "12-1c", "13", "13-1c", "14", "14-1c", "15"], var.pg_version)
-    error_message = "Allowed PostgreSQL versions are 11, 11-1c, 12, 12-1c, 13, 13-1c, 14, 14-1c, 15."
+    condition     = contains(["11", "11-1c", "12", "12-1c", "13", "13-1c", "14", "14-1c", "15", "15-1c", "16"], var.pg_version)
+    error_message = "Allowed PostgreSQL versions are 11, 11-1c, 12, 12-1c, 13, 13-1c, 14, 14-1c, 15, 15-1c, 16"
   }
 }
 
