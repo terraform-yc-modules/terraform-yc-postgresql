@@ -296,3 +296,20 @@ variable "pgpass_path" {
   type        = string
   default     = null
 }
+
+variable "dns_cname_config" {
+  description = <<EOF
+    Creates a CNAME record of connection host in the specified DNS zone.
+
+    Object values:
+      - name                - (Required) The DNS name this record set will apply to.
+      - zone_id             - (Required) The id of the zone in which this record set will reside
+      - ttl                 - (Optional) The time-to-live of this record set (seconds).
+  EOF
+  type = object({
+    name    = string
+    zone_id = string
+    ttl     = optional(number, 360)
+  })
+  default = null
+}

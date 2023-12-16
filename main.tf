@@ -95,3 +95,13 @@ resource "yandex_mdb_postgresql_cluster" "this" {
   }
 
 }
+
+resource "yandex_dns_recordset" "rw" {
+  count = var.dns_cname_config != null ? 1 : 0
+
+  zone_id = var.dns_cname_config["zone_id"]
+  name    = "${var.dns_cname_config["name"]}."
+  type    = "CNAME"
+  ttl     = var.dns_cname_config["ttl"]
+  data    = ["c-${yandex_mdb_postgresql_cluster.this.id}.rw.mdb.yandexcloud.net"]
+}

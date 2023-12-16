@@ -72,3 +72,8 @@ output "connection_step_2" {
   EOF
   value       = "psql 'host=c-${yandex_mdb_postgresql_cluster.this.id}.rw.mdb.yandexcloud.net port=6432 sslmode=verify-full dbname=${var.databases[0]["name"]} user=${var.databases[0]["owner"]} target_session_attrs=read-write'"
 }
+
+output "connection_host_cname" {
+  description = "PostgreSQL cluster connection host CNAME."
+  value       = try(var.dns_cname_config["name"], null)
+}
