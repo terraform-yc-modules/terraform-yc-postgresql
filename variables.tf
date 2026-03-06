@@ -155,9 +155,13 @@ variable "backup_window_start" {
 }
 
 variable "autofailover" {
-  description = "(Optional) Configuration setting which enables and disables auto failover in the cluster."
+  description = "(OBSOLETE) Configuration setting which enables and disables auto failover in the cluster."
   type        = bool
-  default     = true
+  default     = null
+  validation {
+    condition     = var.autofailover != null
+    error_message = "The autofailover parameter is obsolete and has been removed from the provider"
+  }
 }
 
 variable "pooler_config" {
