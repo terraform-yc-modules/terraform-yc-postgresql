@@ -19,7 +19,6 @@ resource "yandex_mdb_postgresql_cluster" "this" {
   config {
     version                   = var.pg_version
     postgresql_config         = var.postgresql_config
-    autofailover              = var.autofailover
     backup_retain_period_days = var.backup_retain_period_days
 
     resources {
