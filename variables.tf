@@ -62,8 +62,8 @@ variable "pg_version" {
   type        = string
   default     = "16"
   validation {
-    condition     = contains(["14", "14-1c", "15", "15-1c", "16", "16-1c", "17", "17-1c", "18"], var.pg_version)
-    error_message = "Allowed PostgreSQL versions are 14, 14-1c, 15, 15-1c, 16, 16-1c, 17, 17-1c, 18."
+    condition     = contains(["14", "14-1c", "15", "15-1c", "16", "16-1c", "17", "17-1c", "18", "18-1c"], var.pg_version)
+    error_message = "Allowed PostgreSQL versions are 14, 14-1c, 15, 15-1c, 16, 16-1c, 17, 17-1c, 18, 18-1c."
   }
 }
 
@@ -159,7 +159,7 @@ variable "autofailover" {
   type        = bool
   default     = null
   validation {
-    condition     = var.autofailover != null
+    condition     = var.autofailover == null
     error_message = "The autofailover parameter is obsolete and has been removed from the provider"
   }
 }
