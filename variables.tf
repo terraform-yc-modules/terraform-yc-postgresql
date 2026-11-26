@@ -92,6 +92,7 @@ variable "access_policy" {
     web_sql       = optional(bool, null)
     serverless    = optional(bool, null)
     data_transfer = optional(bool, null)
+    yandex_query  = optional(bool, null)
   })
   default = {}
 }
@@ -133,6 +134,7 @@ variable "performance_diagnostics" {
   description = "(Optional) PostgreSQL cluster performance diagnostics settings."
   type = object({
     enabled                      = optional(bool, null)
+    advanced_mode                = optional(bool, null)
     sessions_sampling_interval   = optional(number, 60)
     statements_sampling_interval = optional(number, 600)
   })
@@ -154,6 +156,8 @@ variable "backup_window_start" {
   default = null
 }
 
+# Retained so existing callers can still pass the obsolete input.
+# tflint-ignore: terraform_unused_declarations
 variable "autofailover" {
   description = "(OBSOLETE) Configuration setting which enables and disables auto failover in the cluster."
   type        = bool
@@ -167,7 +171,7 @@ variable "autofailover" {
 variable "pooler_config" {
   description = <<EOF
     Configuration of the connection pooler.
-      - pool_discard - Setting pool_discard parameter in Odyssey. Values: yes | no
+      - pool_discard - Obsolete. Remove this setting when upgrading to provider 0.254.0.
       - pooling_mode - Mode that the connection pooler is working in. Values: `POOLING_MODE_UNSPECIFIED`, `SESSION`, `TRANSACTION`, `STATEMENT`
   EOF
   type = object({
@@ -175,6 +179,11 @@ variable "pooler_config" {
     pooling_mode = optional(string, null)
   })
   default = null
+
+  validation {
+    condition     = try(var.pooler_config.pool_discard, null) == null
+    error_message = "Remove pooler_config.pool_discard. The Yandex provider no longer supports this setting."
+  }
 }
 
 variable "hosts_definition" {
@@ -316,4 +325,81 @@ variable "dns_cname_config" {
     ttl     = optional(number, 360)
   })
   default = null
+}
+
+variable "disk_encryption_key_id" {
+  description = "Optional KMS key ID for cluster disk encryption. Encryption cannot be disabled on an existing encrypted cluster."
+  type        = string
+  default     = null
+}
+
+variable "host_group_ids" {
+  description = "Optional IDs of dedicated host groups for the cluster."
+  type        = set(string)
+  default     = null
+}
+
+variable "disk_size_autoscaling" {
+  description = "Optional disk autoscaling settings. The size limit is in GiB and thresholds are percentages."
+  type = object({
+    disk_size_limit           = number
+    planned_usage_threshold   = optional(number)
+    emergency_usage_threshold = optional(number)
+  })
+  default = null
+}
+
+variable "managed_repack" {
+  description = "Optional switch for managed pg_repack."
+  type        = bool
+  default     = null
+}
+
+variable "maintenance_windows" {
+  description = "Optional UTC maintenance schedule. A WEEKLY schedule needs at least one slot that allows temporary write unavailability."
+  type = object({
+    type = string
+    slots = optional(list(object({
+      day                            = string
+      start_time                     = string
+      duration                       = string
+      allow_temporary_unavailability = optional(bool)
+    })), [])
+  })
+  default = null
+
+  validation {
+    condition = var.maintenance_windows == null ? true : (
+      var.maintenance_windows.type == "ANYTIME" && length(var.maintenance_windows.slots) == 0 ||
+      var.maintenance_windows.type == "WEEKLY" && anytrue([
+        for slot in var.maintenance_windows.slots : slot.allow_temporary_unavailability == true
+      ])
+    )
+    error_message = "Use ANYTIME without slots or WEEKLY with at least one slot that allows temporary unavailability."
+  }
+}
+
+variable "timeouts" {
+  description = "Optional provider operation timeouts for the cluster, databases, and both kinds of users."
+  type = object({
+    cluster = optional(object({
+      create = optional(string)
+      update = optional(string)
+      delete = optional(string)
+    }))
+    database = optional(object({
+      create = optional(string)
+      read   = optional(string)
+      update = optional(string)
+      delete = optional(string)
+    }))
+    user = optional(object({
+      create = optional(string)
+      read   = optional(string)
+      update = optional(string)
+      delete = optional(string)
+    }))
+  })
+  nullable = false
+  default  = {}
 }

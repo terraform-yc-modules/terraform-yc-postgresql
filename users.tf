@@ -21,6 +21,16 @@ resource "yandex_mdb_postgresql_user" "owner" {
   conn_limit          = each.value.conn_limit
   deletion_protection = each.value.deletion_protection
   settings            = merge(var.default_user_settings, each.value.settings)
+
+  dynamic "timeouts" {
+    for_each = var.timeouts.user[*]
+    content {
+      create = timeouts.value.create
+      update = timeouts.value.update
+      delete = timeouts.value.delete
+      read   = timeouts.value.read
+    }
+  }
 }
 
 # PostgreSQL users with own permissions
@@ -35,6 +45,16 @@ resource "yandex_mdb_postgresql_user" "user" {
   conn_limit          = each.value.conn_limit
   deletion_protection = each.value.deletion_protection
   settings            = merge(var.default_user_settings, each.value.settings)
+
+  dynamic "timeouts" {
+    for_each = var.timeouts.user[*]
+    content {
+      create = timeouts.value.create
+      update = timeouts.value.update
+      delete = timeouts.value.delete
+      read   = timeouts.value.read
+    }
+  }
 
   dynamic "permission" {
     for_each = each.value.permissions
