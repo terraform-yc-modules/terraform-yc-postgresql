@@ -201,11 +201,11 @@ variable "hosts_definition" {
 
 variable "postgresql_config" {
   description = <<EOF
-    Map of PostgreSQL cluster configuration.
+    PostgreSQL cluster settings sent to the provider as strings. Terraform converts numbers and booleans to strings.
     Details info in a 'PostgreSQL cluster settings' of official documentation.
     Link: https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/mdb_postgresql_cluster#postgresql-cluster-settings
   EOF
-  type        = map(any)
+  type        = map(string)
   default     = null
 }
 
