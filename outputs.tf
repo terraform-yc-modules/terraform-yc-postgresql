@@ -70,7 +70,7 @@ output "connection_step_2" {
         target_session_attrs=read-write"
     
   EOF
-  value       = "psql 'host=c-${yandex_mdb_postgresql_cluster.this.id}.rw.mdb.yandexcloud.net port=6432 sslmode=verify-full dbname=${var.databases[0]["name"]} user=${var.databases[0]["owner"]} target_session_attrs=read-write'"
+  value       = length(var.databases) == 0 ? null : "psql 'host=c-${yandex_mdb_postgresql_cluster.this.id}.rw.mdb.yandexcloud.net port=6432 sslmode=verify-full dbname=${var.databases[0]["name"]} user=${var.databases[0]["owner"]} target_session_attrs=read-write'"
 }
 
 output "connection_host_cname" {

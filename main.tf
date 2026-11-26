@@ -16,6 +16,25 @@ resource "yandex_mdb_postgresql_cluster" "this" {
   deletion_protection = var.deletion_protection
   security_group_ids  = var.security_groups_ids_list
 
+  disk_encryption_key_id = var.disk_encryption_key_id
+  host_group_ids         = var.host_group_ids
+
+  lifecycle {
+    precondition {
+      condition     = var.maintenance_windows == null || var.maintenance_window == null || try(var.maintenance_window.type == "ANYTIME" && var.maintenance_window.day == null && var.maintenance_window.hour == null, false)
+      error_message = "Set maintenance_window to null or leave it at its default when using maintenance_windows."
+    }
+  }
+
+  dynamic "timeouts" {
+    for_each = var.timeouts.cluster[*]
+    content {
+      create = timeouts.value.create
+      update = timeouts.value.update
+      delete = timeouts.value.delete
+    }
+  }
+
   config {
     version                   = var.pg_version
     postgresql_config         = var.postgresql_config
@@ -34,6 +53,7 @@ resource "yandex_mdb_postgresql_cluster" "this" {
         web_sql       = var.access_policy.web_sql
         serverless    = var.access_policy.serverless
         data_transfer = var.access_policy.data_transfer
+        yandex_query  = var.access_policy.yandex_query
       }
     }
 
@@ -41,6 +61,7 @@ resource "yandex_mdb_postgresql_cluster" "this" {
       for_each = range(var.performance_diagnostics == null ? 0 : 1)
       content {
         enabled                      = var.performance_diagnostics.enabled
+        advanced_mode                = var.performance_diagnostics.advanced_mode
         sessions_sampling_interval   = var.performance_diagnostics.sessions_sampling_interval
         statements_sampling_interval = var.performance_diagnostics.statements_sampling_interval
       }
@@ -54,10 +75,25 @@ resource "yandex_mdb_postgresql_cluster" "this" {
       }
     }
 
+    dynamic "disk_size_autoscaling" {
+      for_each = var.disk_size_autoscaling[*]
+      content {
+        disk_size_limit           = disk_size_autoscaling.value.disk_size_limit
+        planned_usage_threshold   = disk_size_autoscaling.value.planned_usage_threshold
+        emergency_usage_threshold = disk_size_autoscaling.value.emergency_usage_threshold
+      }
+    }
+
+    dynamic "managed_repack" {
+      for_each = var.managed_repack[*]
+      content {
+        enabled = managed_repack.value
+      }
+    }
+
     dynamic "pooler_config" {
       for_each = range(var.pooler_config == null ? 0 : 1)
       content {
-        pool_discard = var.pooler_config.pool_discard
         pooling_mode = var.pooler_config.pooling_mode
       }
     }
@@ -85,11 +121,28 @@ resource "yandex_mdb_postgresql_cluster" "this" {
   }
 
   dynamic "maintenance_window" {
-    for_each = range(var.maintenance_window == null ? 0 : 1)
+    for_each = range(var.maintenance_window == null || var.maintenance_windows != null ? 0 : 1)
     content {
       type = var.maintenance_window.type
       day  = var.maintenance_window.day
       hour = var.maintenance_window.hour
+    }
+  }
+
+  dynamic "maintenance_windows" {
+    for_each = var.maintenance_windows[*]
+    content {
+      type = maintenance_windows.value.type
+
+      dynamic "slot" {
+        for_each = maintenance_windows.value.slots
+        content {
+          day                            = slot.value.day
+          start_time                     = slot.value.start_time
+          duration                       = slot.value.duration
+          allow_temporary_unavailability = slot.value.allow_temporary_unavailability
+        }
+      }
     }
   }
 

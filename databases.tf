@@ -10,6 +10,16 @@ resource "yandex_mdb_postgresql_database" "database" {
   deletion_protection = each.value.deletion_protection
   template_db         = each.value.template_db
 
+  dynamic "timeouts" {
+    for_each = var.timeouts.database[*]
+    content {
+      create = timeouts.value.create
+      update = timeouts.value.update
+      delete = timeouts.value.delete
+      read   = timeouts.value.read
+    }
+  }
+
   dynamic "extension" {
     for_each = each.value.extensions
     content {
